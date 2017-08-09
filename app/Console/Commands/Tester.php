@@ -39,7 +39,6 @@ class Tester extends Command
      */
     public function handle()
     {
-        file_put_contents(storage_path('demo.log'), '123');
         $apiGroup = ApiGroup::with('apis.fakers')->findOrFail($this->argument('api-group'));
 
         if (!$apiGroup->apis) {
@@ -97,6 +96,8 @@ class Tester extends Command
 
         if (!$unsuccessfulCount) {
             $mission->is_solved = 'yes';
+        } else {
+            $this->sendMessage($mission);
         }
 
         $mission->save();
@@ -205,5 +206,48 @@ class Tester extends Command
         }
 
         return Validator::make($data, $rules)->passes();
+    }
+
+    protected function sendMessage(Mission $mission)
+    {
+        $client = new Client();
+
+        $response = $client->request('POST', 'http://127.0.0.1:9001', [
+            'body' => json_encode([
+                'action' => 'search',
+                'params' => [
+                    'type' => 'groups',
+                    'method' => 'getObject',
+                    'filter' => ['hello', 'NickName', false, true],
+                ],
+            ]),
+        ]);
+
+        $content = json_decode($response->getBody(), true);
+
+        $username = $content['result']['groups']['UserName'];
+
+        $client->request('POST', 'http://127.0.0.1:9001', [
+            'body' => json_encode([
+                'action' => 'send',
+                'params' => [
+                    'type' => 'text',
+                    'username' => $username,
+                    'content' => <<<MESSAGE
+  FBI Warning
+接口测试 任务告警
+
+任务编号: {$mission->id}
+测试分组: {$mission->apiGroup->name}
+开始时间: {$mission->start_time}
+结束时间: {$mission->finish_time}
+结果总数: {$mission->result_count}
+失败总数: {$mission->unsuccessful_result_count}
+
+回复 "查看任务:{id}" 或 @ 我 开始接手任务.
+MESSAGE
+                ],
+            ]),
+        ]);
     }
 }

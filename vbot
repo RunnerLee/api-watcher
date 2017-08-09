@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @author: RunnerLee
+ * @email: runnerleer@gmail.com
+ * @time: 2017-08
+ */
+
+require __DIR__ . '/vendor/autoload.php';
+
+$vbot = new \App\Vbot\Kernel(require __DIR__ . '/config/vbot.php');
+
+$vbot->messageExtension->load([
+    \App\Vbot\MessageHandler\MissionMessageHandler::class,
+]);
+
+$vbot->server->serve();

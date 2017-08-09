@@ -16,5 +16,10 @@ class Mission extends Model
         'is_solved',
     ];
 
+    public function apiGroup()
+    {
+        return $this->belongsTo(ApiGroup::class);
+    }
+
 
 }

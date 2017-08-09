@@ -12,4 +12,8 @@ class ApiGroup extends Model
         return $this->hasMany(Api::class, 'group_id');
     }
 
+    public function missions()
+    {
+        return $this->hasMany(Mission::class);
+    }
 }

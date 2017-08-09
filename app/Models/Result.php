@@ -9,6 +9,7 @@ class Result extends Model
     protected $fillable = [
         'api_id',
         'faker_id',
+        'mission_id',
         'is_successful',
         'is_timeout',
         'time_cost',
@@ -16,5 +17,6 @@ class Result extends Model
         'response_size',
         'response_headers',
         'response_content',
+        'error_message',
     ];
 }

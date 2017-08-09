@@ -1,0 +1,21 @@
+{
+    "week": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+    ],
+    "hour": {
+        "between": {
+            "from": "",
+            "to": ""
+        },
+        "unless_between": {
+            "from": "",
+            "to": ""
+        }
+    }
+}

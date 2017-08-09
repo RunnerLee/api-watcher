@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Api;
 use App\Models\ApiGroup;
 use App\Models\Faker;
+use App\Models\Mission;
 use App\Models\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -29,6 +30,8 @@ class Tester extends Command
      */
     protected $description = 'execute watcher';
 
+    protected $results = [];
+
     /**
      * Execute the console command.
      *
@@ -36,6 +39,7 @@ class Tester extends Command
      */
     public function handle()
     {
+        file_put_contents(storage_path('demo.log'), '123');
         $apiGroup = ApiGroup::with('apis.fakers')->findOrFail($this->argument('api-group'));
 
         if (!$apiGroup->apis) {
@@ -46,8 +50,17 @@ class Tester extends Command
 
         $promises = [];
 
-        $apiGroup->apis->map(function (Api $api) use (&$promises, $client) {
-            $api->fakers->map(function (Faker $faker) use ($api, &$promises, $client) {
+        $mission = Mission::create([
+            'api_group_id' => $apiGroup->id,
+            'start_time' => microtime(true),
+            'finish_time' => 0,
+        ]);
+
+        $beginRequestTime = 0;
+
+        foreach ($apiGroup->apis as $api) {
+
+            foreach ($api->fakers as $faker) {
                 $promises[] = $client
                     ->requestAsync(
                         $api->method,
@@ -55,17 +68,38 @@ class Tester extends Command
                         $this->buildRequestOption($api, $faker)
                     )
                     ->then(
-                        function (ResponseInterface $response) use ($api, $faker) {
-                            $this->parseAndSaveResult($response, $api, $faker);
+                        function (ResponseInterface $response) use ($api, $faker, $mission, &$beginRequestTime) {
+                            $this->parseResponseAndSaveResult($response, $api, $faker, $mission, $beginRequestTime);
                         },
-                        function (RequestException $exception) use ($api, $faker) {
-
+                        function (RequestException $exception) use ($api, $faker, $mission, &$beginRequestTime) {
+                            $this->parseExceptionAndSaveResult($exception, $api, $faker, $mission, $beginRequestTime);
                         }
                     );
-            });
-        });
+            }
+        }
+
+        $beginRequestTime = microtime(true);
 
         unwrap($promises);
+
+        $mission->finish_time = microtime(true);
+        $mission->result_count = count($this->results);
+
+        $unsuccessfulCount = 0;
+
+        foreach ($this->results as $result) {
+            if ('no' === $result->is_successful) {
+                ++$unsuccessfulCount;
+            }
+        }
+
+        $mission->unsuccessful_result_count = $unsuccessfulCount;
+
+        if (!$unsuccessfulCount) {
+            $mission->is_solved = 'yes';
+        }
+
+        $mission->save();
     }
 
     protected function buildRequestOption(Api $api, Faker $faker)
@@ -102,22 +136,57 @@ class Tester extends Command
         return str_replace($search, $replace, $api->url);
     }
 
-    protected function parseAndSaveResult(ResponseInterface $response, Api $api, Faker $faker)
+    protected function parseResponseAndSaveResult(ResponseInterface $response, Api $api, Faker $faker, Mission $mission, $beginRequestTime)
     {
+        $finishRequestTime = microtime(true);
+
+        /**
+         * 先判断状态码是否符合预期, 如果不符合预期, 则不进行内容格式校验
+         */
         $isSuccessful = $response->getStatusCode() == $api->except_status;
         $isSuccessful && $isSuccessful = $this->validate($response, $api);
 
-        $result = Result::create([
+        $this->results[] = Result::create([
             'api_id' => $api->id,
             'faker_id' => $faker->id,
+            'mission_id' => $mission->id,
             'is_successful' => $isSuccessful ? 'yes' : 'no',
             'is_timeout' => 'no',
-            'time_cost' => 0,
+            'time_cost' => (int)round(($finishRequestTime - $beginRequestTime) * 1000),
             'status_code' => $response->getStatusCode(),
             'response_size' => $response->getBody()->getSize(),
             'response_headers' => json_encode($response->getHeaders()),
             'response_content' => (string)$response->getBody(),
         ]);
+    }
+
+    protected function parseExceptionAndSaveResult(RequestException $e, Api $api, Faker $faker, Mission $mission, $beginRequestTime)
+    {
+        $data = [
+            'api_id' => $api->id,
+            'faker_id' => $faker->id,
+            'mission_id' => $mission->id,
+            'is_successful' => 'no',
+            'is_timeout' => 'no',
+            'time_cost' => 0,
+            'status_code' => 0,
+            'response_size' => 0,
+            'response_headers' => '{}',
+            'response_content' => '',
+            'error_message' => $e->getMessage(),
+        ];
+
+        if (false !== strpos($e->getMessage(), 'timed out')) {
+            $data['time_cost'] = $api->timeout;
+            $data['is_timeout'] = 'yes';
+        } else if ($response = $e->getResponse()) {
+            $data['status_code'] = $response->getStatusCode();
+            $data['response_size'] = $response->getBody()->getSize();
+            $data['response_headers'] = json_encode($response->getHeaders());
+            $data['response_content'] = (string)$response->getBody();
+        }
+
+        $this->results[] = Result::create($data);
     }
 
     protected function validate(ResponseInterface $response, Api $api)

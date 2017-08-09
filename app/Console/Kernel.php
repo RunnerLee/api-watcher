@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\Tester;
+use App\Models\ScheduleRule;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,8 +26,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//         $schedule->command('inspire')
-//                  ->hourly();
+        foreach (ScheduleRule::get() as $rule) {
+            $schedule
+                ->command("watcher:execute {$rule->api_group_id}")
+                ->cron($rule->cron_expression)
+                ->when(function () use ($rule) {
+                    return parse_schedule_condition($rule->cron_condition);
+                })
+                ->runInBackground();
+        }
     }
 
     /**

@@ -17,17 +17,19 @@ class CreateResultsTable extends Migration
             $table->increments('id');
             $table->integer('api_id')->unsigned();
             $table->integer('faker_id')->unsigned();
+            $table->integer('mission_id')->unsigned();
             $table->enum('is_successful', [
                 'yes', 'no'
             ]);
             $table->enum('is_timeout', [
                 'yes', 'no'
             ]);
-            $table->tinyInteger('time_cost');
-            $table->tinyInteger('status_code');
+            $table->integer('time_cost')->unsigned();
+            $table->integer('status_code')->unsigned();
             $table->integer('response_size')->default(0);
             $table->text('response_headers');
             $table->text('response_content');
+            $table->text('error_message');
             $table->timestamps();
         });
     }

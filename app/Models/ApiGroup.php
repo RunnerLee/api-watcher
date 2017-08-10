@@ -16,4 +16,9 @@ class ApiGroup extends Model
     {
         return $this->hasMany(Mission::class);
     }
+
+    public function scopeByName($query, $name)
+    {
+        return $query->where('name', $name);
+    }
 }

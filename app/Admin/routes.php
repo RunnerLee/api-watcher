@@ -12,4 +12,9 @@ Route::group([
 
     $router->get('/', 'HomeController@index');
 
+    $router->resource('apis', 'ApisController');
+    $router->resource('fakers', 'FakersController');
+
+    $router->get('search/api_by_group', 'SearchController@apisByGroup')->name('admin.search.api_by_group');
+
 });

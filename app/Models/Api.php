@@ -11,4 +11,9 @@ class Api extends Model
     {
         return $this->hasMany(Faker::class);
     }
+
+    public function group()
+    {
+        return $this->belongsTo(ApiGroup::class);
+    }
 }

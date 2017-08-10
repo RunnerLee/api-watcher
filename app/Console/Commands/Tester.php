@@ -77,8 +77,14 @@ class Tester extends Command
             }
         }
 
+        /**
+         * 记录开始时间
+         */
         $beginRequestTime = microtime(true);
 
+        /**
+         * 开始请求
+         */
         unwrap($promises);
 
         $mission->finish_time = microtime(true);
@@ -97,7 +103,7 @@ class Tester extends Command
         if (!$unsuccessfulCount) {
             $mission->is_solved = 'yes';
         } else {
-            $this->sendMessage($mission);
+            $this->sendMessage($client, $mission);
         }
 
         $mission->save();
@@ -208,17 +214,17 @@ class Tester extends Command
         return Validator::make($data, $rules)->passes();
     }
 
-    protected function sendMessage(Mission $mission)
+    protected function sendMessage(Client $client, Mission $mission)
     {
-        $client = new Client();
+        $serverHost = 'http://' . config('vbot.swoole.ip') . ':' . config('vbot.swoole.port');
 
-        $response = $client->request('POST', 'http://127.0.0.1:9001', [
+        $response = $client->request('POST', $serverHost, [
             'body' => json_encode([
                 'action' => 'search',
                 'params' => [
                     'type' => 'groups',
                     'method' => 'getObject',
-                    'filter' => ['hello', 'NickName', false, true],
+                    'filter' => [config('vbot.contact.groups.team'), 'NickName', false, true],
                 ],
             ]),
         ]);
@@ -227,14 +233,14 @@ class Tester extends Command
 
         $username = $content['result']['groups']['UserName'];
 
-        $client->request('POST', 'http://127.0.0.1:9001', [
+        $client->request('POST', $serverHost, [
             'body' => json_encode([
                 'action' => 'send',
                 'params' => [
                     'type' => 'text',
                     'username' => $username,
                     'content' => <<<MESSAGE
-  FBI Warning
+FBI Warning
 接口测试 任务告警
 
 任务编号: {$mission->id}

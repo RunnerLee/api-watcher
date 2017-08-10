@@ -61,6 +61,12 @@ return [
         ],
     ],
 
+    'contact' => [
+        'groups' => [
+            'team' => '大丑逼',
+        ],
+    ],
+
     'database' => [
         'default' => 'mysql',
         'redis' => [

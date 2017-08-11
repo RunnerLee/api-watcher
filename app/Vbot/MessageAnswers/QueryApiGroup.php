@@ -19,7 +19,7 @@ class QueryApiGroup implements MessageAnswerInterface
 
     public function reply($message)
     {
-        $group = ApiGroup::find(mb_substr($message, 7));
+        $group = ApiGroup::byName(mb_substr($message, 7))->first();
 
         return <<<MESSAGE
 分组名称: {$group->name}

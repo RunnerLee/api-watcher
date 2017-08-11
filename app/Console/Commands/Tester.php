@@ -164,6 +164,7 @@ class Tester extends Command
             'response_size' => $response->getBody()->getSize(),
             'response_headers' => json_encode($response->getHeaders()),
             'response_content' => (string)$response->getBody(),
+            'error_message' => '',
         ]);
     }
 

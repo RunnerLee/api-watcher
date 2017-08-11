@@ -11,25 +11,34 @@ require __DIR__ . '/vendor/autoload.php';
 use Dotenv\Dotenv;
 use App\Vbot\Kernel;
 use App\Vbot\MessageHandler\MissionMessageHandler;
+use Swoole\Process;
 
 /**
  * load environment config
  */
 (new Dotenv(__DIR__, '.env'))->load();
 
-/**
- * bootstrap vbot
- */
-$vbot = new Kernel(require __DIR__ . '/config/vbot.php');
+$process = new Process(function () {
 
-/**
- * load custom message handler
- */
-$vbot->messageExtension->load([
-    MissionMessageHandler::class,
-]);
+    /**
+     * bootstrap vbot
+     */
+    $vbot = new Kernel(require __DIR__ . '/config/vbot.php');
 
-/**
- * start server
- */
-$vbot->server->serve();
+    /**
+     * load custom message handler
+     */
+    $vbot->messageExtension->load([
+        MissionMessageHandler::class,
+    ]);
+
+    /**
+     * start server
+     */
+    $vbot->server->serve();
+
+});
+
+$process->daemon();
+
+$process->start();

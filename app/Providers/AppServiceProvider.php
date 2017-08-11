@@ -7,6 +7,7 @@ use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Encore\Admin\Admin;
 use Encore\Admin\Form;
 use Illuminate\Support\ServiceProvider;
+use Orangehill\Iseed\IseedServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ('local' === $this->app->environment()) {
             $this->app->register(IdeHelperServiceProvider::class);
+            $this->app->register(IseedServiceProvider::class);
         }
 
         Form::extend('json', JsonEditor::class);

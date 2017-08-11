@@ -21,5 +21,10 @@ class Mission extends Model
         return $this->belongsTo(ApiGroup::class);
     }
 
+    public function results()
+    {
+        return $this->hasMany(Result::class);
+    }
+
 
 }

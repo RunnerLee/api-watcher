@@ -74,9 +74,10 @@ class ApiGroupsController extends Controller
         return Admin::grid(ApiGroup::class, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
+            $grid->name();
+            $grid->apis()->count();
 
             $grid->created_at();
-            $grid->updated_at();
         });
     }
 
@@ -90,6 +91,9 @@ class ApiGroupsController extends Controller
         return Admin::form(ApiGroup::class, function (Form $form) {
 
             $form->display('id', 'ID');
+
+            $form->text('name');
+            $form->hidden('user_group_id')->default(0);
 
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');

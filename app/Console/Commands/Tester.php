@@ -233,6 +233,8 @@ class Tester extends Command
 
         $username = $content['result']['groups']['UserName'];
 
+        $url = route('missions.show', $mission->id);
+
         $client->request('POST', $serverHost, [
             'body' => json_encode([
                 'action' => 'send',
@@ -249,8 +251,9 @@ FBI Warning
 结束时间: {$mission->finish_time}
 结果总数: {$mission->result_count}
 失败总数: {$mission->unsuccessful_result_count}
+查看任务: {$url}
 
-回复 "查看任务:{id}" 或 @ 我 开始接手任务.
+回复 "查看任务:{id}" 查看任务详情
 MESSAGE
                 ],
             ]),

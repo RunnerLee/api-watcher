@@ -8,10 +8,28 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-$vbot = new \App\Vbot\Kernel(require __DIR__ . '/config/vbot.php');
+use Dotenv\Dotenv;
+use App\Vbot\Kernel;
+use App\Vbot\MessageHandler\MissionMessageHandler;
 
+/**
+ * load environment config
+ */
+(new Dotenv(__DIR__, '.env'))->load();
+
+/**
+ * bootstrap vbot
+ */
+$vbot = new Kernel(require __DIR__ . '/config/vbot.php');
+
+/**
+ * load custom message handler
+ */
 $vbot->messageExtension->load([
-    \App\Vbot\MessageHandler\MissionMessageHandler::class,
+    MissionMessageHandler::class,
 ]);
 
+/**
+ * start server
+ */
 $vbot->server->serve();

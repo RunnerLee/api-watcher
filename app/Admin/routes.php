@@ -13,7 +13,10 @@ Route::group([
     $router->get('/', 'HomeController@index');
 
     $router->resource('apis', 'ApisController');
+    $router->resource('api_groups', 'ApiGroupsController');
     $router->resource('fakers', 'FakersController');
+    $router->resource('schedule_rules', 'ScheduleRulesController');
+    $router->resource('missions', 'MissionsController');
 
     $router->get('search/api_by_group', 'SearchController@apisByGroup')->name('admin.search.api_by_group');
 

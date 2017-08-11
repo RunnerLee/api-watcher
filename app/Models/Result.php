@@ -19,4 +19,20 @@ class Result extends Model
         'response_content',
         'error_message',
     ];
+
+    public function api()
+    {
+        return $this->belongsTo(Api::class);
+    }
+
+    public function scopeByApiId($query, $appId)
+    {
+        return $query->where('api_id', $appId);
+    }
+
+    public function scopeWithFailed($query)
+    {
+        return $query->where('is_successful', 'no');
+    }
 }
+

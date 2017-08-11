@@ -50,3 +50,11 @@ if (!function_exists('parse_schedule_condition')) {
         return true;
     }
 }
+
+if (!function_exists('build_json_viewer')) {
+    function build_json_viewer($json)
+    {
+        $id = uniqid('JsonViewer', false);
+        return view('weight.json', compact('json', 'id'));
+    }
+}

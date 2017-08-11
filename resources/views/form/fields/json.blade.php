@@ -5,7 +5,7 @@
     <div class="col-sm-{{$width['field']}}">
 
         @include('admin::form.error')
-        <div id="{{ $name }}" style="width: 100%; height: 180px;"></div>
+        <div id="{{ $name }}" style="width: 100%; height: 200px;"></div>
         <input type="hidden" name="{{ $name }}" value="{{ $value }}">
         @include('admin::form.help-block')
     </div>

@@ -9,12 +9,13 @@
 $path = __DIR__ . '/../storage/vbot/';
 
 return [
+    'url' => env('APP_URL'),
     'path'     => $path,
 
     'swoole'  => [
         'status' => true,
-        'ip'     => '127.0.0.1',
-        'port'   => '9001',
+        'ip'     => env('VBOT_SERVER_IP'),
+        'port'   => env('VBOT_SERVER_PORT'),
     ],
 
     'download' => [
@@ -63,7 +64,7 @@ return [
 
     'contact' => [
         'groups' => [
-            'team' => '大丑逼',
+            'team' => env('VBOT_NOTICE_USER'),
         ],
     ],
 

@@ -2,9 +2,8 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Api;
 use App\Models\ApiGroup;
-use App\Models\Faker;
+use App\Models\ScheduleRule;
 
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -13,7 +12,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 
-class FakersController extends Controller
+class ScheduleRulesController extends Controller
 {
     use ModelForm;
 
@@ -73,15 +72,12 @@ class FakersController extends Controller
      */
     protected function grid()
     {
-        return Admin::grid(Faker::class, function (Grid $grid) {
-
-            $grid->model()->load('api.group');
+        return Admin::grid(ScheduleRule::class, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
-            $grid->api()->group_id('Group')->value(function ($value) {
-                return ApiGroup::find($value)->name;
-            });
-            $grid->api()->name('Api');
+            $grid->apiGroup()->name('APIs Group');
+            $grid->cron_expression('Cron Expression');
+            $grid->cron_condition('Cron Condition');
             $grid->created_at();
         });
     }
@@ -93,34 +89,30 @@ class FakersController extends Controller
      */
     protected function form()
     {
-        return Admin::form(Faker::class, function (Form $form) {
+        return Admin::form(ScheduleRule::class, function (Form $form) {
 
             $form->display('id', 'ID');
 
-            $form
-                ->select('api_group_id', 'API Group')
-                ->options(
-                    function () {
-                        $arr = ApiGroup::get(['id', 'name'])->pluck('name', 'id')->toArray();
-                        $arr[0] = 'Options';
-                        ksort($arr);
-                        return $arr;
-                    }
-                )
-                ->load('api_id', route('admin.search.api_by_group'));
+            $form->select('api_group_id')->options(
+                ApiGroup::has('apis', '>=', '1')->pluck('name', 'id')
+            );
+            $form->text('cron_expression')->default('* * * * *');
+            $form->json('cron_condition')->default(json_encode([
+                'week' => [],
+                'hour' => [
+                    'between' => [
+                        'from' => '',
+                        'to' => '',
+                    ],
+                    'unless_between' => [
+                        'from' => '',
+                        'to' => '',
+                    ],
+                ],
+            ]));
 
-            $form->select('api_id', 'API')->options(function () use ($form) {
-                if ($form->builder()->isMode(Form\Builder::MODE_EDIT)) {
-                    return Api::find($form->model()->api_id)->group->apis()->pluck('name', 'id')->toArray();
-                }
-            });
-
-            $form->ignore('api_group_id');
-
-            $form->json('variables')->default('{}')->rule('required|json');
-            $form->json('queries')->default('{}')->rule('required|json');
-            $form->json('requests')->default('{}')->rule('required|json');
-            $form->json('headers')->default('{}')->rule('required|json');
+            $form->display('created_at', 'Created At');
+            $form->display('updated_at', 'Updated At');
         });
     }
 }

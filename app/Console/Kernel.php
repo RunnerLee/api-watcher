@@ -26,15 +26,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        foreach (ScheduleRule::get() as $rule) {
-            $schedule
-                ->command("watcher:execute {$rule->api_group_id}")
-                ->cron($rule->cron_expression)
-                ->when(function () use ($rule) {
-                    return parse_schedule_condition($rule->cron_condition);
-                })
-                ->runInBackground();
-        }
+        try {
+            foreach (ScheduleRule::get() as $rule) {
+                $schedule
+                    ->command("watcher:execute {$rule->api_group_id}")
+                    ->cron($rule->cron_expression)
+                    ->when(function () use ($rule) {
+                        return parse_schedule_condition($rule->cron_condition);
+                    })
+                    ->runInBackground();
+            }
+        } catch (\Exception $e) {}
     }
 
     /**

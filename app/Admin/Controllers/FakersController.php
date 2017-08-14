@@ -81,7 +81,7 @@ class FakersController extends Controller
             $grid->api()->group_id('Group')->value(function ($value) {
                 return ApiGroup::find($value)->name;
             });
-            $grid->api()->name('Api');
+            $grid->api()->name('API');
             $grid->created_at();
         });
     }

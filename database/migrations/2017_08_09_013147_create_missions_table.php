@@ -16,8 +16,8 @@ class CreateMissionsTable extends Migration
         Schema::create('missions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('api_group_id')->unsigned();
-            $table->decimal('start_time')->unsigned();
-            $table->decimal('finish_time')->unsigned()->default(0);
+            $table->decimal('start_time', 15, 4)->unsigned();
+            $table->decimal('finish_time', 15, 4)->unsigned()->default(0);
             $table->integer('result_count')->unsigned()->default(0);
             $table->integer('unsuccessful_result_count')->unsigned()->default(0);
             $table->enum('is_solved', [

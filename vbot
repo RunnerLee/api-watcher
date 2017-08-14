@@ -22,6 +22,10 @@ use App\Vbot\MessageHandler\MissionMessageHandler;
  */
 $vbot = new Kernel(require __DIR__ . '/config/vbot.php');
 
+$vbot->observer->setQrCodeObserver(function ($url) {
+    file_put_contents(vbot()['config']['path'] . '/url.txt', $url);
+});
+
 /**
  * load custom message handler
  */

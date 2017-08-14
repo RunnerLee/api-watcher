@@ -18,42 +18,31 @@ use Swoole\Process;
  */
 (new Dotenv(__DIR__, '.env'))->load();
 
-$process = new Process(
-    function () {
-        /**
-         * bootstrap vbot
-         */
-        $vbot = new Kernel(require __DIR__ . '/config/vbot.php');
+/**
+ * bootstrap vbot
+ */
+$vbot = new Kernel(require __DIR__ . '/config/vbot.php');
 
 
-        $vbot->observer->setQrCodeObserver(function ($url) {
-            file_put_contents(vbot()['config']['path'] . '/url.txt', $url);
-        });
+$vbot->observer->setQrCodeObserver(function ($url) {
+    file_put_contents(vbot()['config']['path'] . '/url.txt', $url);
+});
 
-        /**
-         * load custom message handler
-         */
-        $vbot->messageExtension->load([
-            MissionMessageHandler::class,
-        ]);
+/**
+ * load custom message handler
+ */
+$vbot->messageExtension->load([
+    MissionMessageHandler::class,
+]);
 
-        /**
-         * load custom message handler
-         */
-        $vbot->messageExtension->load([
-            MissionMessageHandler::class,
-        ]);
+/**
+ * load custom message handler
+ */
+$vbot->messageExtension->load([
+    MissionMessageHandler::class,
+]);
 
-        /**
-         * start server
-         */
-        $vbot->server->serve();
-
-    },
-    false,
-    true
-);
-
-$process->daemon();
-
-$process->start();
+/**
+ * start server
+ */
+$vbot->server->serve();

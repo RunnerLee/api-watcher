@@ -14,21 +14,21 @@ use Illuminate\Console\Command;
 use Psr\Http\Message\ResponseInterface;
 use Validator;
 
-class Tester extends Command
+class MonitorExecutor extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'watcher:execute {api-group}';
+    protected $signature = 'monitor:execute {api-group}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'execute watcher';
+    protected $description = 'execute monitor mission';
 
     protected $results = [];
 

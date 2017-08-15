@@ -24,8 +24,7 @@ class ApiGroupsController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('API Groups');
 
             $content->body($this->grid());
         });
@@ -40,9 +39,7 @@ class ApiGroupsController extends Controller
     public function edit($id)
     {
         return Admin::content(function (Content $content) use ($id) {
-
-            $content->header('header');
-            $content->description('description');
+            $content->header('API Group');
 
             $content->body($this->form()->edit($id));
         });
@@ -57,8 +54,7 @@ class ApiGroupsController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('API Group');
 
             $content->body($this->form());
         });

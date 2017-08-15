@@ -25,8 +25,7 @@ class ScheduleRulesController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Schedule Rules');
 
             $content->body($this->grid());
         });
@@ -42,8 +41,7 @@ class ScheduleRulesController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Schedule Rules');
 
             $content->body($this->form()->edit($id));
         });
@@ -58,8 +56,7 @@ class ScheduleRulesController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Schedule Rules');
 
             $content->body($this->form());
         });

@@ -29,8 +29,7 @@ class MissionsController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Missions');
 
             $content->body($this->grid());
         });
@@ -39,8 +38,9 @@ class MissionsController extends Controller
     public function show(Mission $mission)
     {
         return Admin::content(function (Content $content) use ($mission) {
-            $content->header('Mission');
-            $content->description('mission results');
+
+            $content->header('Missions');
+
             $content->row(function (Row $row) use ($mission) {
                 foreach ($mission->results as $result) {
                     $tab = new Tab();
@@ -74,8 +74,7 @@ class MissionsController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Missions');
 
             $content->body($this->form()->edit($id));
         });
@@ -90,8 +89,7 @@ class MissionsController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Missions');
 
             $content->body($this->form());
         });

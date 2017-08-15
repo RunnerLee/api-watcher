@@ -26,8 +26,7 @@ class FakersController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Fakers');
 
             $content->body($this->grid());
         });
@@ -43,8 +42,7 @@ class FakersController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Fakers');
 
             $content->body($this->form()->edit($id));
         });
@@ -59,8 +57,7 @@ class FakersController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('Fakers');
 
             $content->body($this->form());
         });

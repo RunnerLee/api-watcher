@@ -5,12 +5,12 @@ return [
     /*
      * Laravel-admin name.
      */
-    'name'      => 'Laravel-admin',
+    'name'      => 'API Watcher',
 
     /*
      * Logo in admin panel header.
      */
-    'logo'      => '<b>Laravel</b> admin',
+    'logo'      => '<b>API Watcher</b>',
 
     /*
      * Mini-logo in admin panel header.
@@ -20,7 +20,7 @@ return [
     /*
      * Laravel-admin url prefix.
      */
-    'prefix'    => 'admin',
+    'prefix'    => '',
 
     /*
      * Laravel-admin install directory.
@@ -30,7 +30,7 @@ return [
     /*
      * Laravel-admin html title.
      */
-    'title'  => 'Admin',
+    'title'  => 'API Watcher',
 
     /*
      * Laravel-admin auth setting.

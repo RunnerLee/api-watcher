@@ -10,7 +10,9 @@ Route::group([
     'middleware'    => ['web', 'admin'],
 ], function (Router $router) {
 
-    $router->get('/', 'HomeController@index');
+    $router->get('/', function () {
+        return redirect()->route('missions.index');
+    });
 
     $router->resource('apis', 'ApisController');
     $router->resource('api_groups', 'ApiGroupsController');

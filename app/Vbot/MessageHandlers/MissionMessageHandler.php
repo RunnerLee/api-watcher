@@ -51,7 +51,7 @@ class MissionMessageHandler extends AbstractMessageHandler
     public function handler(Collection $message)
     {
         if ('text' === $message['type'] && 'Group' === $message['fromType'] && $message['isAt']) {
-            $reply = '开黑吗';
+            $reply = '';
             if ('' === $message['pure']) {
                 $reply = '有话说, 有屁放';
             } elseif ($answer = $this->getMatchAnswer($message['pure'])) {
@@ -73,8 +73,8 @@ class MissionMessageHandler extends AbstractMessageHandler
                     }
                     trim($reply);
                 }
-                !$reply && $reply = '我什么都不知道';
             }
+            !$reply && $reply = '我什么都不知道';
             Text::send($message['from']['UserName'], $reply);
         }
     }

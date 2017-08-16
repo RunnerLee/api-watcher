@@ -66,7 +66,14 @@ class MissionMessageHandler extends AbstractMessageHandler
                     ],
                     true
                 );
-                $reply = $response['text'] ?? '我什么都不知道';
+                if (is_array($response)) {
+                    unset($response['code']);
+                    foreach ($response as $item) {
+                        !is_array($item) && $reply .= "{$item}\n";
+                    }
+                    trim($reply);
+                }
+                !$reply && $reply = '我什么都不知道';
             }
             Text::send($message['from']['UserName'], $reply);
         }

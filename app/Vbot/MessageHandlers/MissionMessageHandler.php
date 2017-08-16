@@ -52,8 +52,21 @@ class MissionMessageHandler extends AbstractMessageHandler
     {
         if ('text' === $message['type'] && 'Group' === $message['fromType'] && $message['isAt']) {
             $reply = '开黑吗';
-            if ($answer = $this->getMatchAnswer($message['pure'])) {
+            if ('' === $message['pure']) {
+                $reply = '有话说, 有屁放';
+            } elseif ($answer = $this->getMatchAnswer($message['pure'])) {
                 $reply = $answer->reply($message['pure']);
+            } else {
+                $response = vbot()['http']->json(
+                    'http://www.tuling123.com/openapi/api',
+                    [
+                        'key' => vbot()['config']['tuling.api_key'],
+                        'userid' => vbot()['config']['tuling.user_id'],
+                        'info' => $message['pure'],
+                    ],
+                    true
+                );
+                $reply = $response['text'] ?? '我什么都不知道';
             }
             Text::send($message['from']['UserName'], $reply);
         }

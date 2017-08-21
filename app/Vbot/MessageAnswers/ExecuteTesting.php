@@ -32,7 +32,7 @@ class ExecuteTesting implements MessageAnswerInterface
             $this->phpExecute = (new PhpExecutableFinder())->find(false);
         }
 
-        exec("{$this->phpExecute} artisan watcher:execute {$group->id} > /dev/null 2>&1 &");
+        exec("{$this->phpExecute} artisan monitor:execute {$group->id} > /dev/null 2>&1 &");
 
         return '任务已发送.';
     }

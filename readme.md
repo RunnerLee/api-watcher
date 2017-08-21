@@ -72,3 +72,7 @@ crontab -e
 
 ### 微信通知
 ![](http://oupjptv0d.bkt.gdipper.com//image/github/api-watcher/TIM%E6%88%AA%E5%9B%BE20170815122216.png)
+
+### TODO 
+* 微信公众号/短信/邮件 告警
+* API 文档生成

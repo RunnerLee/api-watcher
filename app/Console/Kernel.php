@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
         try {
             foreach (ScheduleRule::get() as $rule) {
                 $schedule
-                    ->command("watcher:execute {$rule->api_group_id}")
+                    ->command("monitor:execute {$rule->api_group_id}")
                     ->cron($rule->cron_expression)
                     ->when(function () use ($rule) {
                         return parse_schedule_condition($rule->cron_condition);

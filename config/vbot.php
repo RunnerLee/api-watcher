@@ -10,7 +10,13 @@ $path = __DIR__ . '/../storage/vbot/';
 
 return [
     'url' => env('APP_URL'),
+
     'path'     => $path,
+
+    'tuling' => [
+        'api_key' => env('TULING_API_KEY'),
+        'user_id' => env('TULING_USER_ID'),
+    ],
 
     'swoole'  => [
         'status' => true,

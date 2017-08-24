@@ -13,6 +13,8 @@ use function GuzzleHttp\Promise\unwrap;
 use Illuminate\Console\Command;
 use Psr\Http\Message\ResponseInterface;
 use Validator;
+use Log;
+use Exception;
 
 class MonitorExecutor extends Command
 {
@@ -99,14 +101,17 @@ class MonitorExecutor extends Command
         }
 
         $mission->unsuccessful_result_count = $unsuccessfulCount;
-
-        if (!$unsuccessfulCount) {
-            $mission->is_solved = 'yes';
-        } else {
-            $this->sendMessage($client, $mission);
-        }
+        $mission->is_solved = 'yes';
 
         $mission->save();
+
+        if ($unsuccessfulCount) {
+            try {
+                $this->sendMessageByVbot($client, $mission);
+            } catch (Exception $e) {
+                Log::error($e);
+            }
+        }
     }
 
     protected function buildRequestOption(Api $api, Faker $faker)
@@ -215,7 +220,7 @@ class MonitorExecutor extends Command
         return Validator::make($data, $rules)->passes();
     }
 
-    protected function sendMessage(Client $client, Mission $mission)
+    protected function sendMessageByVbot(Client $client, Mission $mission)
     {
         $serverHost = 'http://' . config('vbot.swoole.ip') . ':' . config('vbot.swoole.port');
 

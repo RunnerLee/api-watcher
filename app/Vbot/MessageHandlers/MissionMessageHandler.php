@@ -71,7 +71,7 @@ class MissionMessageHandler extends AbstractMessageHandler
                     foreach ($response as $item) {
                         !is_array($item) && $reply .= "{$item}\n";
                     }
-                    trim($reply);
+                    $reply = rtrim($reply);
                 }
             }
             !$reply && $reply = '我什么都不知道';

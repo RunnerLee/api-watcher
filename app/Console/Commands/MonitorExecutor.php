@@ -7,14 +7,14 @@ use App\Models\ApiGroup;
 use App\Models\Faker;
 use App\Models\Mission;
 use App\Models\Result;
+use App\Notifications\MissionAlert;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use function GuzzleHttp\Promise\unwrap;
 use Illuminate\Console\Command;
 use Psr\Http\Message\ResponseInterface;
 use Validator;
-use Log;
-use Exception;
+use Notification;
 
 class MonitorExecutor extends Command
 {
@@ -105,13 +105,7 @@ class MonitorExecutor extends Command
 
         $mission->save();
 
-        if ($unsuccessfulCount) {
-            try {
-                $this->sendMessageByVbot($client, $mission);
-            } catch (Exception $e) {
-                Log::error($e);
-            }
-        }
+        Notification::send($mission, new MissionAlert());
     }
 
     protected function buildRequestOption(Api $api, Faker $faker)
@@ -219,50 +213,50 @@ class MonitorExecutor extends Command
 
         return Validator::make($data, $rules)->passes();
     }
-
-    protected function sendMessageByVbot(Client $client, Mission $mission)
-    {
-        $serverHost = 'http://' . config('vbot.swoole.ip') . ':' . config('vbot.swoole.port');
-
-        $response = $client->request('POST', $serverHost, [
-            'body' => json_encode([
-                'action' => 'search',
-                'params' => [
-                    'type' => 'groups',
-                    'method' => 'getObject',
-                    'filter' => [config('vbot.contact.groups.team'), 'NickName', false, true],
-                ],
-            ]),
-        ]);
-
-        $content = json_decode($response->getBody(), true);
-
-        $username = $content['result']['groups']['UserName'];
-
-        $url = route('missions.show', $mission->id);
-
-        $client->request('POST', $serverHost, [
-            'body' => json_encode([
-                'action' => 'send',
-                'params' => [
-                    'type' => 'text',
-                    'username' => $username,
-                    'content' => <<<MESSAGE
-FBI Warning
-接口测试 任务告警
-
-任务编号: {$mission->id}
-测试分组: {$mission->apiGroup->name}
-开始时间: {$mission->start_time}
-结束时间: {$mission->finish_time}
-结果总数: {$mission->result_count}
-失败总数: {$mission->unsuccessful_result_count}
-查看任务: {$url}
-
-回复 "查看任务:{id}" 查看任务详情
-MESSAGE
-                ],
-            ]),
-        ]);
-    }
+//
+//    protected function sendMessageByVbot(Client $client, Mission $mission)
+//    {
+//        $serverHost = 'http://' . config('vbot.swoole.ip') . ':' . config('vbot.swoole.port');
+//
+//        $response = $client->request('POST', $serverHost, [
+//            'body' => json_encode([
+//                'action' => 'search',
+//                'params' => [
+//                    'type' => 'groups',
+//                    'method' => 'getObject',
+//                    'filter' => [config('vbot.contact.groups.team'), 'NickName', false, true],
+//                ],
+//            ]),
+//        ]);
+//
+//        $content = json_decode($response->getBody(), true);
+//
+//        $username = $content['result']['groups']['UserName'];
+//
+//        $url = route('missions.show', $mission->id);
+//
+//        $client->request('POST', $serverHost, [
+//            'body' => json_encode([
+//                'action' => 'send',
+//                'params' => [
+//                    'type' => 'text',
+//                    'username' => $username,
+//                    'content' => <<<MESSAGE
+//FBI Warning
+//接口测试 任务告警
+//
+//任务编号: {$mission->id}
+//测试分组: {$mission->apiGroup->name}
+//开始时间: {$mission->start_time}
+//结束时间: {$mission->finish_time}
+//结果总数: {$mission->result_count}
+//失败总数: {$mission->unsuccessful_result_count}
+//查看任务: {$url}
+//
+//回复 "查看任务:{id}" 查看任务详情
+//MESSAGE
+//                ],
+//            ]),
+//        ]);
+//    }
 }

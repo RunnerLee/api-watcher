@@ -9,3 +9,5 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/dingding/missions/{id}', 'MissionsController@show')->name('dingding_missions.show');

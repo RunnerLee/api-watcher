@@ -25,6 +25,11 @@ class Result extends Model
         return $this->belongsTo(Api::class);
     }
 
+    public function faker()
+    {
+        return $this->belongsTo(Faker::class);
+    }
+
     public function scopeByApiId($query, $appId)
     {
         return $query->where('api_id', $appId);

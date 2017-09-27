@@ -28,9 +28,12 @@ class MissionsController extends Controller
             $tab->add('Info', view('weight.info', [
                 'result' => $result
             ]));
-            $tab->add('Request', view('weight.info', [
-                'result' => $result
-            ]));
+            $tab->add('Faker', build_json_viewer(json_encode([
+                'variables' => json_decode($result->faker->variables),
+                'queries' => json_decode($result->faker->queries),
+                'requests' => json_decode($result->faker->requests),
+                'headers' => json_decode($result->faker->headers),
+            ])));
             $tab->add('Headers', view('weight.headers', [
                 'headers' => json_decode($result->response_headers, true)
             ]));
@@ -43,7 +46,6 @@ class MissionsController extends Controller
         }
 
         return view('index', [
-            'title' => 123,
             'content' => $row,
         ]);
     }

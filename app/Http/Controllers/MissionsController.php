@@ -8,11 +8,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mission;
-use App\Notifications\MissionAlert;
 use Encore\Admin\Layout\Row;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Widgets\Tab;
-use Notification;
 
 class MissionsController extends Controller
 {
@@ -23,7 +21,7 @@ class MissionsController extends Controller
 
         $row = new Row();
 
-        foreach ($mission->results as $result) {
+        foreach ($mission->results()->orderBy('is_successful', 'asc')->get() as $result) {
             $tab = new Tab();
             $tab->add('Info', view('weight.info', [
                 'result' => $result
@@ -37,7 +35,13 @@ class MissionsController extends Controller
             $tab->add('Headers', view('weight.headers', [
                 'headers' => json_decode($result->response_headers, true)
             ]));
-            $tab->add('Body', build_json_viewer($result->response_content));
+            if (is_array(json_decode($result->response_content, true))) {
+                $tab->add('Body', build_json_viewer($result->response_content));
+            } else {
+                $tab->add('Body', view('weight.raw', [
+                    'content' => $result->response_content
+                ]));
+            }
             $box = new Box("{$result->api->name} Faker: {$result->faker_id}", $tab);
             if ('no' === $result->is_successful) {
                 $box->style('danger');

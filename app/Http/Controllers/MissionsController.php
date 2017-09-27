@@ -21,7 +21,7 @@ class MissionsController extends Controller
 
         $row = new Row();
 
-        foreach ($mission->results()->orderBy('is_successful', 'asc')->get() as $result) {
+        foreach ($mission->results()->orderBy('is_successful', 'desc')->get() as $result) {
             $tab = new Tab();
             $tab->add('Info', view('weight.info', [
                 'result' => $result

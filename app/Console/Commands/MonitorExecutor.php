@@ -105,7 +105,9 @@ class MonitorExecutor extends Command
 
         $mission->save();
 
-        Notification::send($mission, new MissionAlert());
+        if ($unsuccessfulCount) {
+            Notification::send($mission, new MissionAlert());
+        }
     }
 
     protected function buildRequestOption(Api $api, Faker $faker)

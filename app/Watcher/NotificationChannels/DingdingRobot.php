@@ -34,7 +34,7 @@ class DingdingRobot
                 'btnOrientation' => 0,
                 'btns' => [
                     [
-                        'title' => '妈的! 老子不能忍!',
+                        'title' => '妈蛋! 老子不能忍!',
                         'actionURL' => $message['link'],
                     ],
                 ]

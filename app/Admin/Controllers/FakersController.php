@@ -83,7 +83,7 @@ class FakersController extends Controller
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->disableIdFilter();
-                $filter->equal('app_id', 'App')->select(
+                $filter->equal('api_id', 'Api')->select(
                     Api::all()->pluck('name', 'id')
                 );
             });

@@ -108,6 +108,8 @@ class MonitorExecutor extends Command
         if ($unsuccessfulCount) {
             Notification::send($mission, new MissionAlert());
         }
+
+        $this->info("mission completed. mission id: {$mission->id}");
     }
 
     protected function buildRequestOption(Api $api, Faker $faker)
@@ -121,8 +123,13 @@ class MonitorExecutor extends Command
             'timeout' => $api->timeout,
             'connect_timeout' => $api->timeout,
         ];
-        if ('GET' !== $api->method) {
-            $option['form_params'] = json_decode($faker->requests);
+        if (in_array($api->method, ['PATCH', 'POST', 'PUT'])) {
+            if ('yes' === $api->is_json_body) {
+                $option['headers']['Content-Type'] = 'application/json';
+                $option['body'] = $faker->requests;
+            } else {
+                $option['form_params'] = json_decode($faker->requests);
+            }
         }
         $option = array_merge($option, json_decode($api->options, true));
         $option['http_errors'] = false;

@@ -115,6 +115,14 @@ class ApisController extends Controller
                 'PUT' => 'PUT',
                 'PATCH' => 'PATCH',
             ])->rules('required|in:GET,POST,PUT,PATCH');
+            $form->switch('is_json_body', 'Is Json Body')->states([
+                'on' => [
+                    'value' => 'yes',
+                ],
+                'off' => [
+                    'value' => 'no',
+                ],
+            ])->default('no');
             $form->number('timeout')->default('5')->rules('required|integer|min:3');
             $form->number('except_status')->default(200)->rules('required|integer|min:200|max:599');
             $form->json('headers', 'Request Headers')->default('{}')->rule('required|json');

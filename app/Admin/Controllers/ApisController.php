@@ -78,6 +78,19 @@ class ApisController extends Controller
             $grid->timeout();
             $grid->except_status();
             $grid->fakers()->count();
+
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->disableIdFilter();
+                $filter->equal('group_id', 'Group')->select(
+                    ApiGroup::all()->pluck('name', 'id')
+                );
+                $filter->equal('method')->select([
+                    'POST' => 'POST',
+                    'GET' => 'GET',
+                ]);
+            });
+
+            $grid->disableExport();
         });
     }
 

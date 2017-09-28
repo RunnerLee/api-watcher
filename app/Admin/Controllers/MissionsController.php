@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use Admin;
+use App\Models\ApiGroup;
 use App\Models\Mission;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -113,7 +114,17 @@ class MissionsController extends Controller
             $grid->result_count('Results');
             $grid->unsuccessful_result_count('Unsuccessful Results');
             $grid->created_at();
+
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->disableIdFilter();
+                $filter->equal('api_group_id', 'Group')->select(
+                    ApiGroup::all()->pluck('name', 'id')
+                );
+            });
+
             $grid->disableActions();
+            $grid->disableExport();
+            $grid->disableCreation();
         });
     }
 

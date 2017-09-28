@@ -74,6 +74,12 @@ class ApiGroupsController extends Controller
             $grid->apis()->count();
 
             $grid->created_at();
+
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->disableIdFilter();
+            });
+
+            $grid->disableExport();
         });
     }
 

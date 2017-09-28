@@ -80,6 +80,15 @@ class FakersController extends Controller
             });
             $grid->api()->name('API');
             $grid->created_at();
+
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->disableIdFilter();
+                $filter->equal('app_id', 'App')->select(
+                    Api::all()->pluck('name', 'id')
+                );
+            });
+
+            $grid->disableExport();
         });
     }
 

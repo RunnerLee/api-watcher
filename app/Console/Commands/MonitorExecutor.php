@@ -80,14 +80,15 @@ class MonitorExecutor extends Command
         }
 
         /**
-         * 记录开始时间
-         */
-        $beginRequestTime = microtime(true);
-
-        /**
          * 开始请求
          */
-        unwrap($promises);
+
+        $promisesGroups = array_chunk($promises, 20);
+        foreach ($promisesGroups as $group) {
+            // 记录开始时间
+            $beginRequestTime = microtime(true);
+            unwrap($group);
+        }
 
         $mission->finish_time = microtime(true);
         $mission->result_count = count($this->results);
